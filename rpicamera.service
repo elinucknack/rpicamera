@@ -1,0 +1,24 @@
+[Unit]
+Description=RPi Camera
+After=network.target
+
+[Service]
+Type=simple
+User=rpicamera
+ExecStart=/usr/bin/python3 /var/rpicamera/main.py
+Restart=on-failure
+
+Environment=APP_LOGGER_NAME=rpicamera
+Environment=APP_STREAM_PORT=8080
+Environment=APP_STREAM_FRAME_WIDTH=1280
+Environment=APP_STREAM_FRAME_HEIGHT=720
+Environment=APP_STREAM_FRAME_RATE=4
+Environment=APP_MQTT_HOST=mqtt.mysite.com
+Environment=APP_MQTT_PORT=1883
+Environment=APP_MQTT_USERNAME=mqttuser
+Environment=APP_MQTT_PASSWORD=bWFpbGVycGFzc3dvcmQ=
+Environment=APP_MQTT_TOPIC=mysite/camera/camera0
+Environment=APP_MQTT_USE_SECURE_CONNECTION=false
+
+[Install]
+WantedBy=multi-user.target

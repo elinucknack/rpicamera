@@ -69,7 +69,7 @@ The device state contains the following data:
 
 You can set the stream on or off using the `rpicamera-topic/on` topic and the payload `{"value": true/false}`.
 
-The MJPEG stream is accessible only on localhost by default (http://localhost:<stream_port>/stream). To make it available outside of localhost, you need to allow the stream port using a firewall (e.g. `ufw`). You can also enforce the usage of HTTPS instead of HTTP or secure the stream by some authentication method using an Apache2 or an nginx proxy.
+The MJPEG stream is accessible only on localhost by default (http:\/\/localhost:<stream_port>/stream). To make it available outside of localhost, you need to allow the stream port using a firewall (e.g. `ufw`). You can also enforce the usage of HTTPS instead of HTTP or secure the stream by some authentication method using an Apache2 or an nginx proxy.
 
 ## Authors
 

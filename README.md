@@ -12,9 +12,9 @@ The following steps describe the installation of RPi Camera on Raspberry Pi.
 
 1. Connect to the device through SSH.
 2. Switch to `root` through `sudo su`.
-3. Install python3-paho-mqtt:
+3. Install `python3-paho-mqtt` and `python3-picamera2`:
 ```
-apt install python3-paho-mqtt
+apt install python3-paho-mqtt python3-picamera2
 ```
 
 ## Install the app

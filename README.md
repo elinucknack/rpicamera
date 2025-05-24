@@ -4,6 +4,20 @@ This is the documentation of RPi Camera, an application for MJPEG streaming a Ra
 
 The following steps describe the installation of RPi Camera on Raspberry Pi.
 
+## Hardware build
+
+The door sensor consists of a Raspberry Pi Zero W micro computer and a Raspberry Pi Camera module v 1.3 (a 15cm cable needed). The repository includes a printable 3D model (`.stl` file) of the case. For assembling the case, you need 8 2.5×10mm screws, 1 M4×30mm metric screw, 1 M4 nut and 4 anti-slip stickers.
+
+Below, you can see an example of the built hardware (**Note:** The text on the case is not a part of the `.stl` file included in this repository):
+
+![RPI Camera example 1](rpicamera-example-1.jpg "RPI Camera example 1")
+
+![RPI Camera example 2](rpicamera-example-2.jpg "RPI Camera example 2")
+
+![RPI Camera example 3](rpicamera-example-3.jpg "RPI Camera example 3")
+
+![RPI Camera example 4](rpicamera-example-4.jpg "RPI Camera example 4")
+
 ## Install the prerequisite software
 
 **Note:** Python 3 and Picamera2 are automatically pre-installed on Raspberry Pi OS

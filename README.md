@@ -6,7 +6,7 @@ The following steps describe the installation of RPi Camera on Raspberry Pi.
 
 ## Hardware build
 
-The door sensor consists of a Raspberry Pi Zero W micro computer and a Raspberry Pi Camera module v 1.3 (a 15cm cable needed). The repository includes a printable 3D model (`.stl` file) of the case. For assembling the case, you need 8 2.5×10mm screws, 1 M4×30mm metric screw, 1 M4 nut and 4 anti-slip stickers.
+The door sensor consists of a Raspberry Pi Zero W (Raspberry Pi Zero 2 W) micro computer and a Raspberry Pi Camera module v 1.3 (a 15cm cable needed). The repository includes a printable 3D model (`.stl` file) of the case. For assembling the case, you need 8 2.5×10mm screws, 1 M4×30mm metric screw, 1 M4 nut, 4 anti-slip stickers and a power adapter.
 
 Below, you can see an example of the built hardware (**Note:** The text on the case is not a part of the `.stl` file included in this repository):
 

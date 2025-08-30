@@ -27,6 +27,31 @@ def create_rpi_camera_logger(name):
     
     return logger;
 
+class RPiCameraState:
+    def __init__(self, logger):
+        self.logger = logger
+
+    def read(self):
+        default_state = {'on': False}
+        if not os.path.exists(os.path.dirname(__file__) + '/state.json'):
+            self.logger.info(f'State file does not exist. New state file created.')
+            self.write(default_state)
+            return default_state
+        try:
+            with open(os.path.dirname(__file__) + '/state.json', 'r') as file:
+                return json.load(file)
+        except Exception as e:
+            self.logger.error(f'Invalid state file content. New state file created.')
+            self.write(default_state)
+            return default_state
+
+    def write(self, state):
+        try:
+            with open(os.path.dirname(__file__) + '/state.json', 'w') as file:
+                json.dump(state, file)
+        except Exception as e:
+            self.logger.error(e)
+
 class RPiCameraOutput(io.BufferedIOBase):
     def __init__(self):
         super().__init__()
@@ -42,25 +67,26 @@ class RPiCamera(picamera2.Picamera2):
     def __init__(self, frame_width, frame_height, frame_rate, logger):
         super().__init__()
         self.configure(self.create_video_configuration(main={"size": (frame_width, frame_height)}, controls={"FrameRate": frame_rate}))
-        self.stream_on = False
+        self.state = RPiCameraState(logger)
         self.output = RPiCameraOutput()
         self.logger = logger
-    
-    def start_recording(self):
-        if (not self.stream_on):
-            super().start_recording(picamera2.encoders.JpegEncoder(), picamera2.outputs.FileOutput(self.output))
-            self.stream_on = True
-            self.logger.info('Stream started')
+        if self.state.read()['on']:
+            self.start_recording()
         else:
-            self.logger.info('Stream already running')
-    
-    def stop_recording(self):
-        if (self.stream_on):
-            super().stop_recording()
             self.stream_on = False
-            self.logger.info('Stream stopped')
-        else:
-            self.logger.info('Stream already stopped')
+
+    def start_recording(self):
+        super().start_recording(picamera2.encoders.JpegEncoder(), picamera2.outputs.FileOutput(self.output))
+        self.stream_on = True
+        self.logger.info('Stream started')
+
+    def stop_recording(self):
+        super().stop_recording()
+        self.stream_on = False
+        self.logger.info('Stream stopped')
+
+    def write_state(self):
+        self.state.write({'on': self.stream_on})
 
 class RPiCameraStreamHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
@@ -103,14 +129,11 @@ class MqttClient(paho.mqtt.client.Client):
         self.topic = topic
         self.rpi_camera = rpi_camera
         self.logger = logger
-        self.on_connect = self.on_connect
-        self.on_disconnect = self.on_disconnect
-        self.on_message = self.on_message
     
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
             self.logger.info('Connected to broker')
-            self.subscribe(self.topic + '/on')
+            self.subscribe(self.topic + '/#', qos=2)
         else:
             self.logger.info(f'Connection attempt failed with error code {rc}')  
     
@@ -120,11 +143,14 @@ class MqttClient(paho.mqtt.client.Client):
         self.start_reconnection()
     
     def on_message(self, client, userdata, msg):
-        if json.loads(msg.payload.decode())['value']:
+        if msg.topic == self.topic + '/on' and not self.rpi_camera.stream_on:
             self.rpi_camera.start_recording()
-        else:
+            self.rpi_camera.write_state()
+            self.send_state()
+        if msg.topic == self.topic + '/off' and self.rpi_camera.stream_on:
             self.rpi_camera.stop_recording()
-        self.send_state()
+            self.rpi_camera.write_state()
+            self.send_state()
     
     def start_connection(self, host, port):
         try:
@@ -145,7 +171,7 @@ class MqttClient(paho.mqtt.client.Client):
                 time.sleep(5)
     
     def send_state(self):
-        self.publish(self.topic + '/state', json.dumps({'timestamp': int(time.time()), 'on': rpi_camera.stream_on}), retain=True)
+        self.publish(self.topic + '/state', json.dumps({'timestamp': int(time.time()), 'on': rpi_camera.stream_on}), qos=2, retain=True)
     
     def set_ssl_certificates(self, ca, cert, key):
         self.tls_set(ca_certs=os.path.dirname(__file__) + '/' + ca, certfile=os.path.dirname(__file__) + '/' + cert, keyfile=os.path.dirname(__file__) + '/' + key)

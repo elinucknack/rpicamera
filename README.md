@@ -81,7 +81,9 @@ The device state contains the following data:
 - `on` (boolean)
 - `timestamp` (Unix time in seconds)
 
-You can set the stream on or off using the `rpicamera-topic/on` topic and the payload `{"value": true/false}`.
+You can set the stream on using the `rpicamera-topic/on` topic.
+
+You can set the stream off using the `rpicamera-topic/off` topic.
 
 The MJPEG stream is accessible only on localhost by default (http:\/\/localhost:<stream_port>/stream). To make it available outside of localhost, you need to allow the stream port using a firewall (e.g. `ufw`). You can also enforce the usage of HTTPS instead of HTTP or secure the stream by some authentication method using an Apache2 or an nginx proxy.
 

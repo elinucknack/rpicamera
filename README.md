@@ -75,15 +75,15 @@ systemctl start rpicamera
 
 ### Usage
 
-After the connection to the MQTT server, the RPi Camera sends its state every 15 seconds and after the state change using the `rpicamera-topic/state` topic.
+After the connection to the MQTT server, the RPi Camera sends its state every 15 seconds and after the state change using the `rpicamera-topic/state` topic, the `retain` flag is set to `true` and the `QoS` flag is set to `2`.
 
 The device state contains the following data:
 - `on` (boolean)
 - `timestamp` (Unix time in seconds)
 
-You can set the stream on using the `rpicamera-topic/on` topic.
+You can set the stream on using the `rpicamera-topic/on` topic, set the `retain` flag to `false`.
 
-You can set the stream off using the `rpicamera-topic/off` topic.
+You can set the stream off using the `rpicamera-topic/off` topic, set the `retain` flag to `false`.
 
 The MJPEG stream is accessible only on localhost by default (http:\/\/localhost:<stream_port>/stream). To make it available outside of localhost, you need to allow the stream port using a firewall (e.g. `ufw`). You can also enforce the usage of HTTPS instead of HTTP or secure the stream by some authentication method using an Apache2 or an nginx proxy.
 
